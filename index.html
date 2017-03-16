@@ -9,8 +9,8 @@
 <script type="text/javascript" src="County_Centroids.js"></script>
 <script type="text/javascript" src="us-states.js"></script>
 <style>
-body {background-color: #000;}
-#map {position: absolute; left: 30%; width: 70%; height: 650px; background-color: #000;}
+body {background-color: #00254c;}
+#map {position: absolute; left: 30%; width: 70%; height: 650px; background-color: #00254c;}
 .info { padding: 6px 8px; font: 14px/16px Arial, Helvetica, sans-serif; background: white; box-shadow: 0 0 10px rgba(0,0,0,0.2); border-radius: 5px;} .info h3 { margin: 0 0 5px; color: #000;}
 .legend { text-align: left; line-height: 18px; color: #555; } .legend i { width: 18px; height: 18px; float: left; margin-right: 8px; opacity: 0.7; }
 #controls {
@@ -27,23 +27,23 @@ body {background-color: #000;}
             top: 0;
             bottom: 0;
             width: 30%;
-            background: #000;
+            background: #00254c;
             border-left: 2px solid #aac5ef;
             overflow-y: scroll;
         }h1 {
             padding: 8px 15px 8px 15px;
             margin: 0;
-            background: #000;
+            background: #00254c;
             width: 100%
             font-weight: 350;
             font-size: 1.2em;
             text-align: center;
-            color: #adb3bc;
+            color: #f5d376;
         }
         h2 {
             margin: 0;
             padding: 8px 15px 8px 15px;
-            color: #adb3bc;
+            color: #f5d376;
             font-weight: 500;
             font-size: 1.1em;
             text-align: center;
@@ -51,12 +51,12 @@ body {background-color: #000;}
         h4 {
             padding: 8px 15px 8px 15px;
             margin: 0;
-            background: #000;
+            background: #00254c;
             width: 100%
             font-weight: 250;
             font-size: .9em;
             text-align: center;
-            color: #adb3bc;
+            color: #f5d376;
             border-bottom: 5px solid #aac5ef;
         }
         h3 {
@@ -73,7 +73,7 @@ body {background-color: #000;}
         #side-panel p {
             margin: 8px 0 4px;
             padding: 0 25px 0 15px;
-            color: #adb3bc;
+            color: #f5d376;
             text-align: left;
             font-size: .9em;
             line-height: 1.3em;
@@ -255,7 +255,10 @@ map.on('popupopen', function(centerMarker) {
 	};
 
 	info.update = function (props) {
-		this._div.innerHTML =  (props ?	props.name + ' County</b><br/>' + 'Area: '+ props.CENSUSAREA + ' mi<sup>2</sup><br/>State FIPS: ' + props.COUNTY 
+		this._div.innerHTML =  (props ?	props.name + ' County</b><br/>' + 'Area: '+ props.CENSUSAREA + ' mi<sup>2</sup><br/>' + 
+																		  'Active Lawyers: ' + props.Active + '<br/>' + 
+																		  'Inactive Lawyers: ' + props.Inactive + '<br/>' + 
+																		  'Emeritus Lawyers: ' + props.Emeritus  
 			: 'Hover over a county');
 	};
 
@@ -417,19 +420,39 @@ function style_census(feature) {
 		opacity: 1,
 		color: 'white',
 		dashArray: '3',
-		fillOpacity: 0.8,
+		fillOpacity: 1,
 		fillColor: getColor(feature.properties.CENSUSAREA)
 	};
 }
 
-function style_county(feature) {
+function style_active(feature) {
 	return {
 		weight: 2,
 		opacity: 1,
 		color: 'white',
 		dashArray: '3',
-		fillOpacity: 0.8,
-		fillColor: getColor(feature.properties.COUNTY)
+		fillOpacity: 1,
+		fillColor: getColor(feature.properties.Active)
+	};
+}
+function style_inactive(feature) {
+	return {
+		weight: 2,
+		opacity: 1,
+		color: 'white',
+		dashArray: '3',
+		fillOpacity: 1,
+		fillColor: getColor(feature.properties.Inactive)
+	};
+}
+function style_emeritus(feature) {
+	return {
+		weight: 2,
+		opacity: 1,
+		color: 'white',
+		dashArray: '3',
+		fillOpacity: 1,
+		fillColor: getColor(feature.properties.Emeritus)
 	};
 }
 
@@ -445,7 +468,7 @@ function style_county(feature) {
 var picker = L.control({position: 'bottomleft'});
 picker.onAdd = function (map) {
     var div = L.DomUtil.create('div', 'var_picker');
-    div.innerHTML = '<select id="data_select"><option value="0">(choose a metric)</option><option value="1">Census Area</option><option value="2">Ccounty Fips</option></select>';
+    div.innerHTML = '<select id="data_select"><option value="0">(choose a metric)</option><option value="1">Census Area</option><option value="2">Active Lawyers</option><option value="3">Inactive Lawyers</option><option value="4">Emeritus Lawyers</option></select>';
     div.firstChild.onmousedown = div.firstChild.ondblclick = L.DomEvent.stopPropagation;
     return div;
 };
@@ -465,7 +488,11 @@ function changeHandler_1(e) {
   if (e.target.value == "1") {
 	geojson = L.geoJson(statesData, {style: style_census, onEachFeature: onEachFeature}).addTo(map)
   } else if (e.target.value == "2") {
-    geojson = L.geoJson(statesData, {style: style_county, onEachFeature: onEachFeature}).addTo(map);
+    geojson = L.geoJson(statesData, {style: style_active, onEachFeature: onEachFeature}).addTo(map);
+  } else if (e.target.value == "3") {
+    geojson = L.geoJson(statesData, {style: style_inactive, onEachFeature: onEachFeature}).addTo(map);
+  } else if (e.target.value == "4") {
+    geojson = L.geoJson(statesData, {style: style_emeritus, onEachFeature: onEachFeature}).addTo(map);
   } else {
 	geojson = L.geoJson(statesData, {style: style, onEachFeature: onEachFeature}).addTo(map);
   }
