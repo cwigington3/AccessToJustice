@@ -10,8 +10,8 @@
 <script type="text/javascript" src="us-states.js"></script>
 <style>
 body {background-color: #000;}
-#map {position: absolute; left: 30%; width: 70%; height: 650px;}
-.info { padding: 6px 8px; font: 14px/16px Arial, Helvetica, sans-serif; background: white; box-shadow: 0 0 10px rgba(0,0,0,0.2); border-radius: 5px;} .info h3 { margin: 0 0 5px; color: #777;}
+#map {position: absolute; left: 30%; width: 70%; height: 650px; background-color: #000;}
+.info { padding: 6px 8px; font: 14px/16px Arial, Helvetica, sans-serif; background: white; box-shadow: 0 0 10px rgba(0,0,0,0.2); border-radius: 5px;} .info h3 { margin: 0 0 5px; color: #000;}
 .legend { text-align: left; line-height: 18px; color: #555; } .legend i { width: 18px; height: 18px; float: left; margin-right: 8px; opacity: 0.7; }
 #controls {
           top: 0;
@@ -67,7 +67,7 @@ body {background-color: #000;}
             font-weight: 250;
             font-size: .9em;
             text-align: center;
-            color: #adb3bc;
+            color: #000;
             border-bottom: 5px solid #aac5ef;
         }
         #side-panel p {
@@ -133,12 +133,13 @@ body {background-color: #000;}
 
 var map = L.map('map').setView([ 32.836, -83.22], 7);
 
-L.tileLayer('http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', {
-	attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
-	subdomains: 'abcd',
-    id: 'mapbox.dark'
-    }).addTo(map);
+// WHen the code below is uncommented the map starts with this baselayer
 
+//L.tileLayer('http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', {
+//	attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+//	subdomains: 'abcd',
+//   id: 'mapbox.dark'
+//    }).addTo(map);
 
 
 
@@ -254,9 +255,8 @@ map.on('popupopen', function(centerMarker) {
 	};
 
 	info.update = function (props) {
-		this._div.innerHTML = '<h4>County Area</h4>' +  (props ?
-			'<b>' + props.name + '</b><br />' + props.CENSUSAREA + ' mi<sup>2</sup>'
-			: 'Hover over a state');
+		this._div.innerHTML =  (props ?	props.name + ' County</b><br/>' + 'Area: '+ props.CENSUSAREA + ' mi<sup>2</sup><br/>State FIPS: ' + props.COUNTY 
+			: 'Hover over a county');
 	};
 
 	info.addTo(map);
@@ -367,7 +367,13 @@ map.on('popupopen', function(centerMarker) {
 			'Imagery © <a href="http://mapbox.com">Mapbox</a>',
 		mbUrl = 'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
 
-	var grayscale   = L.tileLayer(mbUrl, {
+	var dark        = L.tileLayer('http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', {
+						attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+								maxZoom: 19,
+    							minZoom: 7,
+								subdomains: 'abcd',
+    							id: 'mapbox.dark'}),
+		grayscale   = L.tileLayer(mbUrl, {
 								maxZoom: 19,
     							minZoom: 7,
 								id: 'mapbox.light',
@@ -378,6 +384,7 @@ map.on('popupopen', function(centerMarker) {
 								id: 'mapbox.streets',
 								attribution: mbAttr});
 	var baseLayers = {
+		"Dark": dark,
 		"Grayscale": grayscale,
 		"Streets": streets
 	};
