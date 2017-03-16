@@ -9,10 +9,16 @@
 <script type="text/javascript" src="County_Centroids.js"></script>
 <script type="text/javascript" src="us-states.js"></script>
 <style>
-body {background-color: #aac5ef;}
+body {background-color: #000;}
 #map {position: absolute; left: 30%; width: 70%; height: 650px;}
 .info { padding: 6px 8px; font: 14px/16px Arial, Helvetica, sans-serif; background: white; box-shadow: 0 0 10px rgba(0,0,0,0.2); border-radius: 5px;} .info h3 { margin: 0 0 5px; color: #777;}
 .legend { text-align: left; line-height: 18px; color: #555; } .legend i { width: 18px; height: 18px; float: left; margin-right: 8px; opacity: 0.7; }
+#controls {
+          top: 0;
+          left: 0;
+          width: 10%;
+          height: 45px;
+        }
 #side-panel {
             position: absolute;
 			text-align: center;
@@ -72,6 +78,44 @@ body {background-color: #aac5ef;}
             font-size: .9em;
             line-height: 1.3em;
         }
+.sidenav {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #111;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+}
+
+.sidenav a {
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    font-size: 25px;
+    color: #818181;
+    display: block;
+    transition: 0.3s
+}
+
+.sidenav a:hover, .offcanvas a:focus{
+    color: #f1f1f1;
+}
+
+.sidenav .closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+}
+
+@media screen and (max-height: 450px) {
+  .sidenav {padding-top: 15px;}
+  .sidenav a {font-size: 18px;}
+}
 </style>
 <link rel="shortcut icon" type="image/x-icon" href="docs/images/favicon.ico" />
 <script src='https://api.mapbox.com/mapbox.js/v3.0.1/mapbox.js'></script>
@@ -101,8 +145,6 @@ L.tileLayer('http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', {
 ////////////////////////////////////////////////////////////////////////////////////////////
 //adding the data//
 ////////////////////////////////////////////////////////////////////////////////////////////
-
-
 
 //var noIcon = L.icon({
 //    iconUrl: 'leaf-green.png',
@@ -145,6 +187,7 @@ selector.onAdd = function(map) {
   var div = L.DomUtil.create('div', 'mySelector');
   //create select element within container (with id, so it can be populated later)
   div.innerHTML = '<select id="marker_select"><option value="init">(select county)</option></select>';
+  div.firstChild.onmousedown = div.firstChild.ondblclick = L.DomEvent.stopPropagation;
   return div;
 };
 
@@ -187,6 +230,7 @@ function changeHandler(e) {
   }
 }
 
+//adds the polygon data to the map
 L.geoJson(statesData).addTo(map);
 
 map.on('popupopen', function(centerMarker) {
@@ -200,7 +244,7 @@ map.on('popupopen', function(centerMarker) {
 
 
 <script type="text/javascript">
-
+// this script controls the info and the legend
 	var info = L.control({position: 'bottomright'});
 
 	info.onAdd = function (map) {
@@ -219,13 +263,13 @@ map.on('popupopen', function(centerMarker) {
 
 
 	function getColor(d) {
-		return d > 1000 ? '#800026' :
-				d > 500  ? '#BD0026' :
-				d > 200  ? '#E31A1C' :
-				d > 100  ? '#FC4E2A' :
-				d > 50   ? '#FD8D3C' :
-				d > 20   ? '#FEB24C' :
-				d > 10   ? '#FED976' :
+		return d > 700 ? '#800026' :
+				d > 600  ? '#BD0026' :
+				d > 500  ? '#E31A1C' :
+				d > 400  ? '#FC4E2A' :
+				d > 300   ? '#FD8D3C' :
+				d > 200   ? '#FEB24C' :
+				d > 100   ? '#FED976' :
 							'#FFEDA0';
 	}
 
@@ -287,7 +331,7 @@ map.on('popupopen', function(centerMarker) {
 	legend.onAdd = function (map) {
 
 		var div = L.DomUtil.create('div', 'info legend'),
-			grades = [0, 10, 20, 50, 100, 200, 500, 1000],
+			grades = [0, 100, 200, 300, 400, 500, 600, 700],
 			labels = [],
 			from, to;
 
@@ -347,180 +391,81 @@ map.on('popupopen', function(centerMarker) {
 	L.control.layers(baseLayers, overlays).addTo(map);
 </script>
 
-<style>
-.menu-ui {
-  position:right;
-  top:10px;
-  right:10px;
-  }
-
-/* Do a fancy data transition for browsers that support it */
-path {
-  -webkit-transition:fill 200ms;
-          transition:fill 200ms;
-  }
-</style>
-
-
-<script src='https://code.jquery.com/jquery-1.11.0.min.js'></script>
-
 
 <script>
-
-// Choropleth colors from http://colorbrewer2.org/
-// You can choose your own range (or different number of colors)
-// and the code will compensate.
-var hues = [
-    '#eff3ff',
-    '#bdd7e7',
-    '#6baed6',
-    '#3182bd',
-    '#08519c'];
-
-// The names of variables that we'll show in the UI for
-// styling. These need to match exactly.
-var variables = [
-    'Active Lawyers',
-    'Inactive Lawyers',
-    'Emeritus Lawyers'];
-
-// Collect the range of each variable over the full set, so
-// we know what to color the brightest or darkest.
-var ranges = {};
-var $select = $('<select></select>')
-    .appendTo($('#variables'))
-    .on('change', function() {
-        setVariable($(this).val());
-    });
-for (var i = 0; i < variables.length; i++) {
-    ranges[variables[i]] = { min: Infinity, max: -Infinity };
-    // Simultaneously, build the UI for selecting different
-    // ranges
-    $('<option></option>')
-        .text(variables[i])
-        .attr('value', variables[i])
-        .appendTo($select);
-}
-
-// Create a layer of state features, and when it's done
-// loading, run loadData
-var usLayer = L.mapbox.featureLayer()
-    .loadURL('us-states.js')
-    .addTo(map)
-    .on('ready', loadData);
-
-// Grab the spreadsheet of data as JSON. If you have CSV
-// data, you should convert it to JSON with
-// http://shancarter.github.io/mr-data-converter/
-function loadData() {
-    $.getJSON('us-states.json')
-        .done(function(data) {
-            joinData(data, usLayer);
-        });
-}
-
-function joinData(data, layer) {
-    // First, get the US state GeoJSON data for reference.
-    var usGeoJSON = usLayer.getGeoJSON(),
-        byState = {};
-
-    // Rearrange it so that instead of being a big array,
-    // it's an object that is indexed by the state name,
-    // that we'll use to join on.
-    for (var i = 0; i < usGeoJSON.features.length; i++) {
-        byState[usGeoJSON.features[i].properties.name] =
-            usGeoJSON.features[i];
-    }
-    for (i = 0; i < data.length; i++) {
-        // Match the GeoJSON data (byState) with the tabular data
-        // (data), replacing the GeoJSON feature properties
-        // with the full data.
-        byState[data[i].name].properties = data[i];
-        for (var j = 0; j < variables.length; j++) {
-            // Simultaneously build the table of min and max
-            // values for each attribute.
-            var n = variables[j];
-            ranges[n].min = Math.min(data[i][n], ranges[n].min);
-            ranges[n].max = Math.max(data[i][n], ranges[n].max);
-        }
-    }
-    // Create a new GeoJSON array of features and set it
-    // as the new usLayer content.
-    var newFeatures = [];
-    for (i in byState) {
-        newFeatures.push(byState[i]);
-    }
-    usLayer.setGeoJSON(newFeatures);
-    // Kick off by filtering on an attribute.
-    setVariable(variables[0]);
-}
-
-// Excuse the short function name: this is not setting a JavaScript
-// variable, but rather the variable by which the map is colored.
-// The input is a string 'name', which specifies which column
-// of the imported JSON file is used to color the map.
-function setVariable(name) {
-    var scale = ranges[name];
-    usLayer.eachLayer(function(layer) {
-        // Decide the color for each state by finding its
-        // place between min & max, and choosing a particular
-        // color as index.
-        var division = Math.floor(
-            (hues.length - 1) *
-            ((layer.feature.properties[name] - scale.min) /
-            (scale.max - scale.min)));
-        // See full path options at
-        // http://leafletjs.com/reference.html#path
-        layer.setStyle({
-            fillColor: hues[division],
-            fillOpacity: 0.8,
-            weight: 0.5
-        });
-    });
-}
-
-</script>
-
-<script>
-var picker = L.control({position: 'bottomleft'});
-picker.onAdd = function (map) {
-    var div = L.DomUtil.create('div', 'info legend');
-    div.innerHTML = '<select><option>Active</option><option>Inactive</option><option>Emeritus</option></select>';
-    div.firstChild.onmousedown = div.firstChild.ondblclick = L.DomEvent.stopPropagation;
-    return div;
-};
-picker.addTo(map);
-
-
-
 function getColor(d) {
-	return d > 1000 ? '#800026' :
-			d > 500  ? '#BD0026' :
-			d > 200  ? '#E31A1C' :
-			d > 100  ? '#FC4E2A' :
-			d > 50   ? '#FD8D3C' :
-			d > 20   ? '#FEB24C' :
-			d > 10   ? '#FED976' :
-						'#FFEDA0';
+		return d > 700 ? '#800026' :
+				d > 600  ? '#BD0026' :
+				d > 500  ? '#E31A1C' :
+				d > 400  ? '#FC4E2A' :
+				d > 300   ? '#FD8D3C' :
+				d > 200   ? '#FEB24C' :
+				d > 100   ? '#FED976' :
+							'#FFEDA0';
 }
 
-function style(feature) {
+function style_census(feature) {
 	return {
 		weight: 2,
 		opacity: 1,
 		color: 'white',
 		dashArray: '3',
-		fillOpacity: 0.7,
+		fillOpacity: 0.8,
+		fillColor: getColor(feature.properties.CENSUSAREA)
+	};
+}
+
+function style_county(feature) {
+	return {
+		weight: 2,
+		opacity: 1,
+		color: 'white',
+		dashArray: '3',
+		fillOpacity: 0.8,
 		fillColor: getColor(feature.properties.COUNTY)
 	};
 }
 
-var geojson;
 
-geojson = L.geoJson(statesData, {
-	style: style,
-	onEachFeature: onEachFeature
-}).addTo(map);
+
+//geojson = L.geoJson(statesData, {
+//	style: style,
+//	onEachFeature: onEachFeature
+//}).addTo(map);
+
+
+// this script controls the variable by which the map is colored
+var picker = L.control({position: 'bottomleft'});
+picker.onAdd = function (map) {
+    var div = L.DomUtil.create('div', 'var_picker');
+    div.innerHTML = '<select id="data_select"><option value="0">(choose a metric)</option><option value="1">Census Area</option><option value="2">Ccounty Fips</option></select>';
+    div.firstChild.onmousedown = div.firstChild.ondblclick = L.DomEvent.stopPropagation;
+    return div;
+};
+picker.addTo(map);
+
+//add data picker listener as on line 214
+var data_select = L.DomUtil.get("data_select");
+
+L.DomEvent.addListener(data_select, 'click', function(e) {
+  L.DomEvent.stopPropagation(e);
+});
+
+L.DomEvent.addListener(data_select, 'change', changeHandler_1);
+
+var geojson;
+function changeHandler_1(e) {
+  if (e.target.value == "1") {
+	geojson = L.geoJson(statesData, {style: style_census, onEachFeature: onEachFeature}).addTo(map)
+  } else if (e.target.value == "2") {
+    geojson = L.geoJson(statesData, {style: style_county, onEachFeature: onEachFeature}).addTo(map);
+  } else {
+	geojson = L.geoJson(statesData, {style: style, onEachFeature: onEachFeature}).addTo(map);
+  }
+}
+
+// this part of the script controls the coloring of the map
+
 
 </script>
 
@@ -529,11 +474,15 @@ geojson = L.geoJson(statesData, {
     <h4>Legal Representation in Georgia</h4>
     <p>This map displays the various degrees to which legal rerpresentation is available in the state of Georgia. Each county is colored according to the chosen statistic (bottom left) such as the total number of Active Lawyers in the county or the percent of the state's lawyers which reside in the county.</p>
     <h2>About </h2>
-        <p>The Access to Justice group is a collaboration between .</p>
-        <p><a href = "http://i.imgur.com/bI0pMCM.png"><img src="images/eth-cc.png" alt="legend"></a></p>
+        <p>The Access to Justice group is a collaboration between Chad Wigington and Joshua Weitz at Georgia Tech and Darcy and Lauren at Georgia State University.</p>
+        
     <h2>About the data</h2>
-        <p>Data for crop start </p>
-        <p>Map authored by Charles Wigington, March 2017.</p>
+        <p>The Georgia bar provides information about each county with respect to the number of active, inactive, and emeritus lawyers. By merging this data with available census data, the counties can be colored according to access to legal counsel as well as descriptive statistics about each county. </p>
+        <br><br><br><br>
+<p>Map authored by Charles Wigington, March 2017.</p>
+
     </div>
+
+
 
 </body>
