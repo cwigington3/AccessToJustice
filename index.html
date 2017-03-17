@@ -206,7 +206,7 @@ L.geoJson(statesData).addTo(map);
 map.on('popupopen', function(centerMarker) {
         var cM = map.project(centerMarker.popup._latlng);
         cM.y -= centerMarker.popup._container.clientHeight/2
-        map.setView(map.unproject(cM),10, {animate: true});
+        map.setView(map.unproject(cM),8, {animate: true});
     });
 </script>
 
