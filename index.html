@@ -10,7 +10,11 @@
 <script type="text/javascript" src="us-states.js"></script>
 <style>
 body {background-color: #00254c;}
+<<<<<<< HEAD
 #map {position: absolute; left: 30%; width: 70%; height: 98%; background-color: #00254c;}
+=======
+#map {position: absolute; left: 30%; width: 70%; height: 850px; background-color: #00254c;}
+>>>>>>> a7592d093b2608ab560c31a55ed2516a16f388c6
 .info { padding: 6px 8px; font: 14px/16px Arial, Helvetica, sans-serif; background: white; box-shadow: 0 0 10px rgba(0,0,0,0.2); border-radius: 5px;} .info h3 { margin: 0 0 5px; color: #000;}
 .legend { text-align: left; line-height: 18px; color: #555; } .legend i { width: 18px; height: 18px; float: left; margin-right: 8px; opacity: 0.7; }
 #controls {
@@ -255,10 +259,17 @@ map.on('popupopen', function(centerMarker) {
 	};
 
 	info.update = function (props) {
+<<<<<<< HEAD
 		this._div.innerHTML =  (props ?	props.name + ' County</b><br/>' + 'Area: '+ props.CENSUSAREA + ' mi<sup>2</sup><br/>' +
 																		  'Active Lawyers: ' + props.Active + '<br/>' +
 																		  'Inactive Lawyers: ' + props.Inactive + '<br/>' +
 																		  'Emeritus Lawyers: ' + props.Emeritus
+=======
+		this._div.innerHTML =  (props ?	props.name + ' County</b><br/>' + 'Area: '+ props.CENSUSAREA + ' mi<sup>2</sup><br/>' + 
+																		  'Active Lawyers: ' + props.Active + '<br/>' + 
+																		  'Inactive Lawyers: ' + props.Inactive + '<br/>' + 
+																		  'Emeritus Lawyers: ' + props.Emeritus  
+>>>>>>> a7592d093b2608ab560c31a55ed2516a16f388c6
 			: 'Hover over a county');
 	};
 
@@ -468,7 +479,11 @@ function style_emeritus(feature) {
 var picker = L.control({position: 'bottomleft'});
 picker.onAdd = function (map) {
     var div = L.DomUtil.create('div', 'var_picker');
+<<<<<<< HEAD
     div.innerHTML = '<select id="data_select"><option value="1">Active Lawyers</option><option value="2">Inactive Lawyers</option><option value="3">Emeritus Lawyers</option><option value="4">Census Area</option></select>';
+=======
+    div.innerHTML = '<select id="data_select"><option value="0">(choose a metric)</option><option value="1">Census Area</option><option value="2">Active Lawyers</option><option value="3">Inactive Lawyers</option><option value="4">Emeritus Lawyers</option></select>';
+>>>>>>> a7592d093b2608ab560c31a55ed2516a16f388c6
     div.firstChild.onmousedown = div.firstChild.ondblclick = L.DomEvent.stopPropagation;
     return div;
 };
@@ -484,6 +499,7 @@ L.DomEvent.addListener(data_select, 'click', function(e) {
 L.DomEvent.addListener(data_select, 'change', changeHandler_1);
 
 var geojson;
+<<<<<<< HEAD
 geojson = L.geoJson(statesData, {style: style_active, onEachFeature: onEachFeature}).addTo(map)
 function changeHandler_1(e) {
   if (e.target.value == "1") {
@@ -494,6 +510,17 @@ function changeHandler_1(e) {
     geojson = L.geoJson(statesData, {style: style_emeritus, onEachFeature: onEachFeature}).addTo(map);
   } else if (e.target.value == "4") {
     geojson = L.geoJson(statesData, {style: style_census, onEachFeature: onEachFeature}).addTo(map);
+=======
+function changeHandler_1(e) {
+  if (e.target.value == "1") {
+	geojson = L.geoJson(statesData, {style: style_census, onEachFeature: onEachFeature}).addTo(map)
+  } else if (e.target.value == "2") {
+    geojson = L.geoJson(statesData, {style: style_active, onEachFeature: onEachFeature}).addTo(map);
+  } else if (e.target.value == "3") {
+    geojson = L.geoJson(statesData, {style: style_inactive, onEachFeature: onEachFeature}).addTo(map);
+  } else if (e.target.value == "4") {
+    geojson = L.geoJson(statesData, {style: style_emeritus, onEachFeature: onEachFeature}).addTo(map);
+>>>>>>> a7592d093b2608ab560c31a55ed2516a16f388c6
   } else {
 	geojson = L.geoJson(statesData, {style: style, onEachFeature: onEachFeature}).addTo(map);
   }
@@ -509,8 +536,13 @@ function changeHandler_1(e) {
     <h4>Legal Representation in Georgia</h4>
     <p>This map displays the various degrees to which legal rerpresentation is available in the state of Georgia. Each county is colored according to the chosen statistic (bottom left) such as the total number of Active Lawyers in the county or the percent of the state's lawyers which reside in the county.</p>
     <h2>About </h2>
+<<<<<<< HEAD
         <p>The Access to Justice group is a collaboration between Chad Wigington and Joshua Weitz at Georgia Tech and Darcy McLean Meals and Lauren Sudeall Lucas at Georgia State University.</p>
 
+=======
+        <p>The Access to Justice map is a collaborative effort between Chad Wigington and Joshua Weitz at Georgia Tech and Darcy McLean Meals and Lauren Sudeall Lucas at Georgia State University.</p>
+        
+>>>>>>> a7592d093b2608ab560c31a55ed2516a16f388c6
     <h2>About the data</h2>
         <p>The Georgia bar provides information about each county with respect to the number of active, inactive, and emeritus lawyers. By merging this data with available census data, the counties can be colored according to access to legal counsel as well as descriptive statistics about each county. </p>
         <br><br><br><br>
