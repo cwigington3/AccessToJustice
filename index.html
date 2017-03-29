@@ -130,8 +130,10 @@ var map = L.map('map').setView([ 32.836, -83.22], 7);
 // WHen the code below is uncommented the map starts with this baselayer
 L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
 		attribution: 'Tiles &copy; Mapbox',
-	subdomains: 'abcd',
-   id: 'mapbox.streets'
+		maxZoom: 19,
+		minZoom: 7,
+		subdomains: 'abcd',
+	    id: 'mapbox.streets'
     }).addTo(map);
 ////////////////////////////////////////////////////////////////////////////////////////////
 //adding the data//
