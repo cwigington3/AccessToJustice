@@ -1,0 +1,12 @@
+open county_lawyers_and_census_data.json
+ determine how many variables are in each record
+ create a hash table for each variable where the key is the county name
+
+for line in county_lawyers_and_census_data.json
+  grab the name of the County
+  for each variable in the county lawyers and census data_set
+    add the data about the county from each hash table (where the key is the county name)
+
+for each line in A COPY of us-states
+  grab the name of the county
+  grab the data about the county from the hash table
