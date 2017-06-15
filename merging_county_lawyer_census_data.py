@@ -4,26 +4,40 @@ Created on Mon Mar  6 15:15:26 2017
 @author: wigington
 """
 
-in1 = open("us-states_lawyer_census.js")
-in2 = open("County_Lawyer_and_census_data.json")
+in2 = open("LegalAidCounties.csv")
 next = in2.readline()
 next = in2.readline()
-counties = dict()
+countiesDict = {}
 while next != "":
     next = next.strip('\n')
-    countyName = next[next.find("COUNTY")+10:next.find(", \"OBJECTID")-1]
-    countyInfo = next[next.find("Active")-1:next.find("},")-2] +	","
-    counties[countyName] = countyInfo
+    next = next.split(',')
+    LegalAidOffice = next[0]
+    Lawyers= next[1]
+    CountiesServed = next[2]
+    CountyName = next[3]
+    organization = next[4]
+    countiesDict[CountyName] = {}
+    countiesDict[CountyName]['legalAidOffice'] = LegalAidOffice
+    countiesDict[CountyName]['lawyers'] = float(Lawyers)
+    countiesDict[CountyName]['countiesServed'] = float(CountiesServed)
+    countiesDict[CountyName]['organization'] = organization
     next = in2.readline()
 #counties = counties.sort()
-countyShapes = in1.readline()
-countyShapes = in1.readline()
+in1 = open("us-states_lawyer_census.js")
+#in2 = open("County_Lawyer_and_census_data.json")
+County = in1.readline()
+County = in1.readline()
 out = open("Georgia_Data.js",'w')
-while countyShapes != " ]}\n":
-    countyNameMatch = countyShapes[countyShapes.find("name")+7:countyShapes.find("LSAD")-3]
-    countyInfoMatchPrefix = countyShapes[0:countyShapes.find("LSAD")-1]
-    countyInfoMatchSuffix = countyShapes[countyShapes.find("LSAD")-1:countyShapes.find("\n")+2]
-    fullLine = countyInfoMatchPrefix + counties[countyNameMatch] + countyInfoMatchSuffix
+out.write('''var statesData = {"type":"FeatureCollection","features":[\n''')
+while County != " ]}\n":
+    countyName = County[County.find("name")+7:County.find("Active")-3]
+    #countiesDict[countyName]['organization']
+    countyInfoMatchPrefix = County[0:County.find("Shorthand_FIPS")-1]
+    countyInfoMatchSuffix = County[County.find("Shorthand_FIPS")-1:County.find("\n")+2]
+    fullLine = countyInfoMatchPrefix + str(r'"'+"legalAidOffice"+r'"') + ": " + r'"'+countiesDict[countyName]['legalAidOffice'] + r'"' + ", " + str(r'"'+"lawyers"+r'"') + ": " + str(countiesDict[countyName]['lawyers']) + ", " + str(r'"'+"countiesServed" +r'"') + ": "  + str(countiesDict[countyName]['countiesServed']) +", " + str(r'"'+"Organization"+r'"') + ": " + r'"'+countiesDict[countyName]['organization']+r'"' + ", " + countyInfoMatchSuffix
     out.write(fullLine)
-    countyShapes = in1.readline()
+    County = in1.readline()
+out.write(''']}''')
 out.close()
+in1.close()
+in2.close()

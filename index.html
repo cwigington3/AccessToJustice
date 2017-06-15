@@ -227,8 +227,11 @@ map.on('popupopen', function(centerMarker) {
 	info.update = function (props) {
 		this._div.innerHTML =  (props ?	'<b>' + props.name + ' County</b><br/>' +
 							   <!---'Area: '+ props.CENSUSAREA + ' mi<sup>2</sup><br/>' + --->
-								props.Active + ' active lawyers' + '<br/>' +
-								<!---'Inactive Lawyers: ' + props.Inactive + '<br/>' +--->
+                 props.Active + ' active lawyers' + '<br/>' +
+                 props.Organization + 'operates the ' + props.legalAidOffice + ' Legal Aid Office.' + '<br/>' +
+                 props.lawyers + ' lawyers serve the ' + props.legalAidOffice + ' office.' + '<br/>' +
+                 'The ' + props.legalAidOffice + ' office serves ' +  props.countiesServed + ' counties in total.' + '<br/>' +
+                <!---'Inactive Lawyers: ' + props.Inactive + '<br/>' +--->
 								<!---'Emeritus Lawyers: ' + props.Emeritus--->
 								props.pctHouseholdsHalfMileofPublicTransport + '% of households within a half mile of public transit' + '<br/>' +
 								props.PctHouseholdsNOvehicle + '% of households do not have a vehicle ' + '<br/>' +
@@ -261,7 +264,7 @@ map.on('popupopen', function(centerMarker) {
 							'#FFEDA0';
 	}
 
-	function getColorPctVehicle(d) {
+  function getColorPctVehicle(d) {
 		return d > 17.5 ? '#800026' :
 				d > 15  ? '#BD0026' :
 				d > 12.5  ? '#E31A1C' :
@@ -270,6 +273,19 @@ map.on('popupopen', function(centerMarker) {
 				d > 5   ? '#FEB24C' :
 				d > 2.5   ? '#FED976' :
 							'#FFEDA0';
+	}
+
+  function getColoraidLawyers(d) {
+    return d > 15 ? '#800026' :
+        d > 13  ? '#BA0006' :
+        d > 11  ? '#BD0036' :
+        d > 10  ? '#E31A1C' :
+        d > 9  ? '#FC4E2A' :
+        d > 8   ? '#FD8D3C' :
+        d > 7   ? '#FEB24C' :
+        d > 6   ? '#FED956' :
+        d > 5   ? '#FED976' :
+              '#FFEDA0';
 	}
 
 	function style(feature) {
@@ -373,6 +389,23 @@ map.on('popupopen', function(centerMarker) {
 		return div;
 	};
 
+  var legend_legalAid = L.control({position: 'bottomleft'});
+	legend_legalAid.onAdd = function (map) {
+		var div = L.DomUtil.create('div', 'info legend'),
+			grades = [4,5,6,7,8,9,10,11,13,15],
+			labels = [],
+			from, to;
+		for (var i = 0; i < grades.length; i++) {
+			from = grades[i];
+			to = grades[i + 1];
+			labels.push(
+        //				'<i style="background:' + getColoraidLawyers(from + 1) + '"></i> ' + from + (to ? '&ndash;' + to : '+'));
+        				'<i style="background:' + getColoraidLawyers(from + 1) + '"></i> ' + from );
+		}
+		div.innerHTML = labels.join('<br>');
+		return div;
+	};
+
 </script>
 
 <div id="map1"></div>
@@ -468,6 +501,19 @@ function getColor_vehicle_percent(d) {
 							'#FFEDA0';
 }
 
+function getColoraidLawyers(d) {
+  return d > 15 ? '#800026' :
+      d > 13  ? '#BA0006' :
+      d > 11  ? '#BD0036' :
+      d > 10  ? '#E31A1C' :
+      d > 9  ? '#FC4E2A' :
+      d > 8   ? '#FD8D3C' :
+      d > 7   ? '#FEB24C' :
+      d > 6   ? '#FED956' :
+      d > 5   ? '#FED976' :
+            '#FFEDA0';
+}
+
 function style_census(feature) {
 	return {
 		weight: 2,
@@ -545,6 +591,17 @@ function style_povertylevel(feature) {
 	};
 }
 
+function style_aidlawyerlevel(feature) {
+	return {
+		weight: 2,
+		opacity: 1,
+		color: 'white',
+		dashArray: '3',
+		fillOpacity: 1,
+		fillColor: getColoraidLawyers(feature.properties.lawyers)
+	};
+}
+
 //geojson = L.geoJson(statesData, {
 //	style: style,
 //	onEachFeature: onEachFeature
@@ -554,7 +611,7 @@ function style_povertylevel(feature) {
 var picker = L.control({position: 'bottomleft'});
 picker.onAdd = function (map) {
     var div = L.DomUtil.create('div', 'var_picker');
-    div.innerHTML = '<select id="data_select"><option value="1">Active Lawyers</option><option value="2">No English at Home (%)</option><option value="3">Within half mile of Public Transportation(%)</option><option value="4">Census Area</option><option value="5">Home Internet Access (%)</option><option value="6">No Household Vehicle (%)</option><option value="7">Population (%) at or below poverty level</option></select>';
+    div.innerHTML = '<select id="data_select"><option value="1">Legal Aid Lawyers </option><option value="2">Active Lawyers</option><option value="3">No English at Home (%)</option><option value="4">Within half mile of Public Transportation(%)</option><option value="5">Census Area</option><option value="6">Home Internet Access (%)</option><option value="7">No Household Vehicle (%)</option><option value="8">Population (%) at or below poverty level</option></select>';
     div.firstChild.onmousedown = div.firstChild.ondblclick = L.DomEvent.stopPropagation;
     return div;
 };
@@ -566,43 +623,48 @@ L.DomEvent.addListener(data_select, 'click', function(e) {
 });
 L.DomEvent.addListener(data_select, 'change', changeHandler_1);
 var geojson;
-geojson = L.geoJson(statesData, {style: style_active, onEachFeature: onEachFeature}).addTo(map)
+geojson = L.geoJson(statesData, {style: style_aidlawyerlevel, onEachFeature: onEachFeature}).addTo(map)
 function changeHandler_1(e) {
   if (e.target.value == "1") {
+  geojson = L.geoJson(statesData, {style: style_aidlawyerlevel, onEachFeature: onEachFeature}).addTo(map);
+map.removeControl(currentLegend);
+currentLegend = legend_legalAid;
+legend_legalAid.addTo(map);
+} else if (e.target.value == "2") {
 	geojson = L.geoJson(statesData, {style: style_active, onEachFeature: onEachFeature}).addTo(map)
 	map.removeControl(currentLegend);
 	currentLegend = legend_active;
 	legend_active.addTo(map);
-  } else if (e.target.value == "2") {
+} else if (e.target.value == "3") {
     geojson = L.geoJson(statesData, {style: style_english, onEachFeature: onEachFeature}).addTo(map);
 	map.removeControl(currentLegend);
 	currentLegend = legend_noEnglish;
 	legend_noEnglish.addTo(map);
-  } else if (e.target.value == "3") {
+} else if (e.target.value == "4") {
     geojson = L.geoJson(statesData, {style: style_pubtrans, onEachFeature: onEachFeature}).addTo(map);
 	map.removeControl(currentLegend);
 	currentLegend = legend_noVehicle;
 	legend_noVehicle.addTo(map);
-  } else if (e.target.value == "4") {
+} else if (e.target.value == "5") {
     geojson = L.geoJson(statesData, {style: style_census, onEachFeature: onEachFeature}).addTo(map);
 	map.removeControl(currentLegend);
 	currentLegend = legend_active;
 	legend_active.addTo(map);
-  } else if (e.target.value == "5") {
+} else if (e.target.value == "6") {
     geojson = L.geoJson(statesData, {style: style_internet, onEachFeature: onEachFeature}).addTo(map);
 	map.removeControl(currentLegend);
 	currentLegend = legend_noEnglish;
 	legend_noEnglish.addTo(map);
-  } else if (e.target.value == "6") {
+} else if (e.target.value == "7") {
     geojson = L.geoJson(statesData, {style: style_novehicle, onEachFeature: onEachFeature}).addTo(map);
 	map.removeControl(currentLegend);
 	currentLegend = legend_noVehicle;
 	legend_noVehicle.addTo(map);
-  } else if (e.target.value == "7") {
-    geojson = L.geoJson(statesData, {style: style_povertylevel, onEachFeature: onEachFeature}).addTo(map);
-	map.removeControl(currentLegend);
-	currentLegend = legend_noEnglish;
-	legend_noEnglish.addTo(map);
+} else if (e.target.value == "8") {
+  geojson = L.geoJson(statesData, {style: style_povertylevel, onEachFeature: onEachFeature}).addTo(map);
+map.removeControl(currentLegend);
+currentLegend = legend_noEnglish;
+legend_noEnglish.addTo(map);
   } else {
 	geojson = L.geoJson(statesData, {style: style_active, onEachFeature: onEachFeature}).addTo(map);
 	map.removeControl(currentLegend);
