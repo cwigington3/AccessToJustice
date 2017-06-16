@@ -352,8 +352,6 @@ map.on('popupopen', function(centerMarker) {
 		div.innerHTML = labels.join('<br>');
 		return div;
 	};
-	legend_active.addTo(map);
-	currentLegend = legend_active;
 
 	var legend_noEnglish = L.control({position: 'bottomleft'});
 	legend_noEnglish.onAdd = function (map) {
@@ -405,6 +403,9 @@ map.on('popupopen', function(centerMarker) {
 		div.innerHTML = labels.join('<br>');
 		return div;
 	};
+
+  legend_legalAid.addTo(map);
+	currentLegend = legend_legalAid;
 
 </script>
 
@@ -662,14 +663,14 @@ legend_legalAid.addTo(map);
 	legend_noVehicle.addTo(map);
 } else if (e.target.value == "8") {
   geojson = L.geoJson(statesData, {style: style_povertylevel, onEachFeature: onEachFeature}).addTo(map);
-map.removeControl(currentLegend);
-currentLegend = legend_noEnglish;
-legend_noEnglish.addTo(map);
+  map.removeControl(currentLegend);
+  currentLegend = legend_noEnglish;
+  legend_noEnglish.addTo(map);
   } else {
-	geojson = L.geoJson(statesData, {style: style_active, onEachFeature: onEachFeature}).addTo(map);
+	geojson = L.geoJson(statesData, {style: style_aidlawyerlevel, onEachFeature: onEachFeature}).addTo(map);
 	map.removeControl(currentLegend);
-	currentLegend = legend_noEnglish;
-	legend_noEnglish.addTo(map);
+	currentLegend = legend_legalAid;
+	legend_legalAid.addTo(map);
   }
 }
 // this part of the script controls the coloring of the map
