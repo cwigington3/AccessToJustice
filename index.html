@@ -21,7 +21,7 @@ body {background-color: #00254c;}
         }
 #side-panel {
             position: absolute;
-			text-align: center;
+			      text-align: center;
             left: 0;
             right: 0;
             top: 0;
@@ -71,6 +71,13 @@ body {background-color: #00254c;}
             border-bottom: 5px solid #aac5ef;
         }
         #side-panel p {
+            margin: 8px 0 4px;
+            padding: 0 25px 0 15px;
+            color: #f5d376;
+            text-align: left;
+            font-size: .9em;
+            line-height: 1.3em;
+        } ul {
             margin: 8px 0 4px;
             padding: 0 25px 0 15px;
             color: #f5d376;
@@ -226,67 +233,78 @@ map.on('popupopen', function(centerMarker) {
 	};
 	info.update = function (props) {
 		this._div.innerHTML =  (props ?	'<b>' + props.name + ' County</b><br/>' +
-							   <!---'Area: '+ props.CENSUSAREA + ' mi<sup>2</sup><br/>' + --->
-                 props.Active + ' active lawyers' + '<br/>' +
+							   'The population is '+ props.totpop10 + ' people.' + '<br/>' +
+                 'There are ' + props.Active + ' active lawyers.' + '<br/>' +
                  props.Organization + ' operates the ' + props.legalAidOffice + ' Legal Aid Office.' + '<br/>' +
                  props.lawyers + ' lawyers serve the ' + props.legalAidOffice + ' office.' + '<br/>' +
                  'The ' + props.legalAidOffice + ' office serves ' +  props.countiesServed + ' counties in total.' + '<br/>' +
                 <!---'Inactive Lawyers: ' + props.Inactive + '<br/>' +--->
 								<!---'Emeritus Lawyers: ' + props.Emeritus--->
-								props.pctHouseholdsHalfMileofPublicTransport + '% of households within a half mile of public transit' + '<br/>' +
-								props.PctHouseholdsNOvehicle + '% of households do not have a vehicle ' + '<br/>' +
-								props.PctPopNONEnglishHome + '% of population does not speak english at home' + '<br/>' +
-								props.pctPopLEQpovertylevel + '% of population at or below poverty level' + '<br/>' +
-								props.HomeInternetAccessRangeLow + '% of households have internet access'
+								props.pctHouseholdsHalfMileofPublicTransport + '% of households live within a half mile of public transit.' + '<br/>' +
+								props.PctHouseholdsNOvehicle + '% of households do not have a vehicle.' + '<br/>' +
+								props.PctPopNONEnglishHome + '% of the population does not speak english at home.' + '<br/>' +
+								props.pctPopLEQpovertylevel + '% of the population is at or below the poverty level.' + '<br/>' +
+								props.HomeInternetAccessRangeLow + '% of households have internet access.'
 			: 'Hover over a county');
 	};
 	info.addTo(map);
 
 	function getColor(d) {
-		return d > 700 ? '#800026' :
-				d > 600  ? '#BD0026' :
-				d > 500  ? '#E31A1C' :
-				d > 400  ? '#FC4E2A' :
-				d > 300   ? '#FD8D3C' :
-				d > 200   ? '#FEB24C' :
-				d > 100   ? '#FED976' :
-							'#FFEDA0';
+		return d > 700 ? '#081d58' :
+				d > 600  ? '#253494' :
+				d > 500  ? '#225ea8' :
+				d > 400  ? '#1d91c0' :
+				d > 300   ? '#41b6c4' :
+				d > 200   ? '#7fcdbb' :
+				d > 100   ? '#c7e9b4' :
+							'#edf8b1';
 	}
 
 	function getColorPct(d) {
-		return d > 70 ? '#800026' :
-				d > 60  ? '#BD0026' :
-				d > 50  ? '#E31A1C' :
-				d > 40  ? '#FC4E2A' :
-				d > 30   ? '#FD8D3C' :
-				d > 20   ? '#FEB24C' :
-				d > 10   ? '#FED976' :
-							'#FFEDA0';
+		return d > 70 ? '#081d58' :
+				d > 60  ? '#253494' :
+				d > 50  ? '#225ea8' :
+				d > 40  ? '#1d91c0' :
+				d > 30   ? '#41b6c4' :
+				d > 20   ? '#7fcdbb' :
+				d > 10   ? '#c7e9b4' :
+							'#edf8b1';
 	}
 
   function getColorPctVehicle(d) {
-		return d > 17.5 ? '#800026' :
-				d > 15  ? '#BD0026' :
-				d > 12.5  ? '#E31A1C' :
-				d > 10  ? '#FC4E2A' :
-				d > 7.5   ? '#FD8D3C' :
-				d > 5   ? '#FEB24C' :
-				d > 2.5   ? '#FED976' :
-							'#FFEDA0';
+		return d > 17.5 ? '#081d58' :
+				d > 15  ? '#253494' :
+				d > 12.5  ? '#225ea8' :
+				d > 10  ? '#1d91c0' :
+				d > 7.5   ? '#41b6c4' :
+				d > 5   ? '#7fcdbb' :
+				d > 2.5   ? '#c7e9b4' :
+							'#edf8b1';
 	}
 
   function getColoraidLawyers(d) {
-    return d > 15 ? '#800026' :
-        d > 13  ? '#BA0006' :
-        d > 11  ? '#BD0036' :
-        d > 10  ? '#E31A1C' :
-        d > 9  ? '#FC4E2A' :
-        d > 8   ? '#FD8D3C' :
-        d > 7   ? '#FEB24C' :
-        d > 6   ? '#FED956' :
-        d > 5   ? '#FED976' :
-              '#FFEDA0';
+    return d > 15 ? '#081d58' :
+        d > 13  ? '#184967' :
+        d > 11  ? '#2F5977' :
+        d > 10  ? '#466A87' :
+        d > 9  ? '#5D7C97' :
+        d > 8   ? '#748DA6' :
+        d > 7   ? '#8B9EB6' :
+        d > 6   ? '#A2AEC6' :
+        d > 5   ? '#B9C0D6' :
+              '#D0D1E6';
 	}
+
+  function getColor_pop(d) {
+    return d > 750000 ? '#081d58 ' :
+        d > 500000  ? '#253494' :
+        d > 250000  ? '#225ea8' :
+        d > 100000  ? '#1d91c0' :
+        d > 50000   ? '#41b6c4' :
+        d > 25000   ? '#7fcdbb' :
+        d > 10000   ? '#c7e9b4' :
+              '#edf8b1';
+  }
 
 	function style(feature) {
 		return {
@@ -306,8 +324,8 @@ map.on('popupopen', function(centerMarker) {
 			opacity: .1,
 			color: '#fff',
 			dashArray: '3',
-			fillOpacity: 0.1,
-			fillColor: ' #fff'
+			fillOpacity: 1,
+			fillColor: ' #b30000'
 		});
 		if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
 			layer.bringToFront();
@@ -404,6 +422,23 @@ map.on('popupopen', function(centerMarker) {
 		return div;
 	};
 
+  var legend_population = L.control({position: 'bottomleft'});
+	legend_population.onAdd = function (map) {
+		var div = L.DomUtil.create('div', 'info legend'),
+			grades = [0, 10000, 25000, 50000, 100000, 250000, 500000, 750000],
+			labels = [],
+			from, to;
+		for (var i = 0; i < grades.length; i++) {
+			from = grades[i];
+			to = grades[i + 1];
+			labels.push(
+				'<i style="background:' + getColor_pop(from + 1) + '"></i> ' +
+				from + (to ? '&ndash;' + to : '+'));
+		}
+		div.innerHTML = labels.join('<br>');
+		return div;
+	};
+
 //  legend_legalAid.addTo(map);
 //	currentLegend = legend_legalAid;
 
@@ -466,53 +501,64 @@ map.on('popupopen', function(centerMarker) {
 //		"Courthouses": Courthouses
 //	};
 //	L.control.layers(baseLayers, overlays).addTo(map);
-	L.control.layers(baseLayers).addTo(map);
+//	L.control.layers(baseLayers).addTo(map);
 </script>
 
 
 <script>
 function getColor(d) {
-		return d > 700 ? '#800026' :
-				d > 600  ? '#BD0026' :
-				d > 500  ? '#E31A1C' :
-				d > 400  ? '#FC4E2A' :
-				d > 300   ? '#FD8D3C' :
-				d > 200   ? '#FEB24C' :
-				d > 100   ? '#FED976' :
-							'#FFEDA0';
+		return d > 700 ? '#081d58 ' :
+				d > 600  ? '#253494' :
+				d > 500  ? '#225ea8' :
+				d > 400  ? '#1d91c0' :
+				d > 300   ? '#41b6c4' :
+				d > 200   ? '#7fcdbb' :
+				d > 100   ? '#c7e9b4' :
+							'#edf8b1';
 }
 function getColor_percent(d) {
-		return d > 70 ? '#800026' :
-				d > 60  ? '#BD0026' :
-				d > 50  ? '#E31A1C' :
-				d > 40  ? '#FC4E2A' :
-				d > 30   ? '#FD8D3C' :
-				d > 20   ? '#FEB24C' :
-				d > 10   ? '#FED976' :
-							'#FFEDA0';
+		return d > 70 ? '#081d58' :
+				d > 60  ? '#253494' :
+				d > 50  ? '#225ea8' :
+				d > 40  ? '#1d91c0' :
+				d > 30   ? '#41b6c4' :
+				d > 20   ? '#7fcdbb' :
+				d > 10   ? '#c7e9b4' :
+							'#edf8b1';
 }
 function getColor_vehicle_percent(d) {
-		return d > 17.5 ? '#800026' :
-				d > 15  ? '#BD0026' :
-				d > 12.5  ? '#E31A1C' :
-				d > 10  ? '#FC4E2A' :
-				d > 7.5   ? '#FD8D3C' :
-				d > 5   ? '#FEB24C' :
-				d > 2.5   ? '#FED976' :
-							'#FFEDA0';
+		return d > 17.5 ? '#081d58' :
+				d > 15  ? '#253494' :
+				d > 12.5  ? '#225ea8' :
+				d > 10  ? '#1d91c0' :
+				d > 7.5   ? '#41b6c4' :
+				d > 5   ? '#7fcdbb' :
+				d > 2.5   ? '#c7e9b4' :
+							'#edf8b1';
 }
 
 function getColoraidLawyers(d) {
-  return d > 15 ? '#800026' :
-      d > 13  ? '#BA0006' :
-      d > 11  ? '#BD0036' :
-      d > 10  ? '#E31A1C' :
-      d > 9  ? '#FC4E2A' :
-      d > 8   ? '#FD8D3C' :
-      d > 7   ? '#FEB24C' :
-      d > 6   ? '#FED956' :
-      d > 5   ? '#FED976' :
-            '#FFEDA0';
+  return d > 15 ? '#081d58' :
+      d > 13  ? '#184967' :
+      d > 11  ? '#2F5977' :
+      d > 10  ? '#466A87' :
+      d > 9  ? '#5D7C97' :
+      d > 8   ? '#748DA6' :
+      d > 7   ? '#8B9EB6' :
+      d > 6   ? '#A2AEC6' :
+      d > 5   ? '#B9C0D6' :
+            '#D0D1E6';
+}
+
+function getColor_pop(d) {
+  return d > 750000 ? '#081d58 ' :
+      d > 500000  ? '#253494' :
+      d > 250000  ? '#225ea8' :
+      d > 100000  ? '#1d91c0' :
+      d > 50000   ? '#41b6c4' :
+      d > 25000   ? '#7fcdbb' :
+      d > 10000   ? '#c7e9b4' :
+            '#edf8b1';
 }
 
 function style_census(feature) {
@@ -522,7 +568,7 @@ function style_census(feature) {
 		color: 'white',
 		dashArray: '3',
 		fillOpacity: 1,
-		fillColor: getColor(feature.properties.CENSUSAREA)
+		fillColor: getColor_pop(feature.properties.totpop10)
 	};
 }
 function style_active(feature) {
@@ -612,7 +658,7 @@ function style_aidlawyerlevel(feature) {
 var picker = L.control({position: 'bottomleft'});
 picker.onAdd = function (map) {
     var div = L.DomUtil.create('div', 'var_picker');
-    div.innerHTML = '<select id="data_select"><option value="1">Legal Aid Lawyers </option><option value="2">Active Lawyers</option><option value="3">No English at Home (%)</option><option value="4">Within half mile of Public Transportation(%)</option><option value="5">Census Area</option><option value="6">Home Internet Access (%)</option><option value="7">No Household Vehicle (%)</option><option value="8">Population (%) at or below poverty level</option></select>';
+    div.innerHTML = '<select id="data_select"><option value="1">Legal Aid Lawyers </option><option value="2">Active Lawyers</option><option value="3">No English at Home (%)</option><option value="4">Within half mile of Public Transportation(%)</option><option value="6">Home Internet Access (%)</option><option value="7">No Household Vehicle (%)</option><option value="8">Population (%) at or below poverty level</option><option value="5">County Population</option></select>';
     div.firstChild.onmousedown = div.firstChild.ondblclick = L.DomEvent.stopPropagation;
     return div;
 };
@@ -649,8 +695,8 @@ legend_legalAid.addTo(map);
 } else if (e.target.value == "5") {
     geojson = L.geoJson(statesData, {style: style_census, onEachFeature: onEachFeature}).addTo(map);
 	map.removeControl(currentLegend);
-	currentLegend = legend_active;
-	legend_active.addTo(map);
+	currentLegend = legend_population;
+	legend_population.addTo(map);
 } else if (e.target.value == "6") {
     geojson = L.geoJson(statesData, {style: style_internet, onEachFeature: onEachFeature}).addTo(map);
 	map.removeControl(currentLegend);
@@ -682,15 +728,21 @@ currentLegend = legend_legalAid;
     <h1>Access to Justice</h1>
     <h4>Legal Representation in Georgia</h4>
     <p>This map - a collaboration between Chad Wigington and Joshua Weitz at Georgia Tech and the Center for Access to Justice at Georgia State University College of Law - provides information regarding access to justice in the state of Georgia. Each county is shaded according to the metric chosen at the bottom left.</p>
-    <h2>About </h2>
-    <p>In the top right, counties are listed alphabetically and can be selected to show their location.</p>
-    <p>In the top right, map styles can be changed for a better user experience.</p>
-    <p>Selecting a metric from the drop-down menu on the bottom left changes the map coloring scheme.</p>
-    <p>Hovering the mouse within the borders of a county will display the county's information in the bottom right corner. Likewise, the color of the county will match the color of the previously selected metric.</p>
+
     <h2>About the data</h2>
-        <p>The State Bar of Georgia provided the number of lawyers by county.  By combining this data with available census data, statistics from the Federal Communications Commission and the Center for Neighborhood Technology
-<a href="http://alltransit.cnt.org/" style="color:#f5d376">(http://alltransit.cnt.org/)</a>, and information from Georgia Legal Services Program and the Atlanta Legal Aid Society, the map provides insight into attorney representation and other factors that impact access to justice throughout the state. </p>
+        <p>The State Bar of Georgia provided the number of lawyers by county in 2016. By combining this data with information from the <a href="https://srln.maps.arcgis.com/apps/MapJournal/index.html?appid=7bed22dba4ec45f281b766181b862156" style="color:#f5d376">(Self Represented Litigants Network)</a>, available census data from the <a href="https://www.census.gov/programs-surveys/acs/about.html" style="color:#f5d376">2014 American Community Survey</a>, 2015 statistics from the Federal Communications Commission, data from the Center for Neighborhood Technology, and 2016 information from the <a href="http://www.glsp.org/" style="color:#f5d376">Georgia Legal Services Program (GLSP)</a> and <a href="https://www.atlantalegalaid.org/" style="color:#f5d376">the Atlanta Legal Aid Society (ALAS)</a>, the map provides insight into attorney representation and other factors that impact access to justice throughout the state.</p>
+
+        <p>The “Legal Aid Lawyers” metric includes attorneys from ALAS (in Clayton, Fulton, Cobb, DeKalb, and Gwinnett counties) and GLSP (outside the five-county metro Atlanta area served by ALAS). For the ALAS counties, the number of Legal Aid Lawyers serving a given county reflects both attorneys assigned to that county and a portion of the 22.5 ALAS attorneys not assigned to a particular county; for example, Cobb County has 6 ALAS lawyers, but its total includes 1/5 of the program-wide attorneys for an additional 4.5 attorneys. By contrast, GLSP attorneys are assigned to a particular region of the state and serve several counties (e.g. attorneys from the Albany-Valdosta office service 29 counties). Thus, outside the five-county metro area, the Legal Aid Lawyers total for a particular county includes GLSP lawyers who also serve other counties. GLSP totals for a given county do not include 7 statewide attorneys or the 3 attorneys serving farmworkers throughout the state.
+</p>
         <br>
+        <h2>About </h2>
+        <ul>
+        <li>In the top right, counties are listed alphabetically and can be selected to show their location.</li>
+        <li>In the top right, map styles can be changed for a better user experience.</li>
+        <li>Selecting a metric from the drop-down menu on the bottom left changes the map coloring scheme.</li>
+        <li>Hovering the mouse within the borders of a county will display the county's information in the bottom right corner.</li>
+      </ul>
+      <br>
 <p>Map designed by Charles Wigington, March 2017.</p>
 
     </div>
