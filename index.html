@@ -233,8 +233,8 @@ map.on('popupopen', function(centerMarker) {
 	};
 	info.update = function (props) {
 		this._div.innerHTML =  (props ?	'<b>' + props.name + ' County</b><br/>' +
-							   'The population is '+ props.totpop10 + ' people.' + '<br/>' +
-                 'There are ' + props.Active + ' active lawyers.' + '<br/>' +
+							   'The population is '+ props.totpop10.toLocaleString() + ' people.' + '<br/>' +
+                 'There are ' + props.Active.toLocaleString() + ' active lawyers.' + '<br/>' +
                  props.Organization + ' operates the ' + props.legalAidOffice + ' Legal Aid Office.' + '<br/>' +
                  props.lawyers + ' lawyers serve the ' + props.legalAidOffice + ' office.' + '<br/>' +
                  'The ' + props.legalAidOffice + ' office serves ' +  props.countiesServed + ' counties in total.' + '<br/>' +
@@ -658,7 +658,7 @@ function style_aidlawyerlevel(feature) {
 var picker = L.control({position: 'bottomleft'});
 picker.onAdd = function (map) {
     var div = L.DomUtil.create('div', 'var_picker');
-    div.innerHTML = '<select id="data_select"><option value="1">Legal Aid Lawyers </option><option value="2">Active Lawyers</option><option value="3">No English at Home (%)</option><option value="4">Within half mile of Public Transportation(%)</option><option value="6">Home Internet Access (%)</option><option value="7">No Household Vehicle (%)</option><option value="8">Population (%) at or below poverty level</option><option value="5">County Population</option></select>';
+    div.innerHTML = '<select id="data_select"><option value="1">Legal Services Lawyers </option><option value="2">Active Lawyers</option><option value="3">No English at Home (%)</option><option value="4">Within half mile of Public Transportation(%)</option><option value="6">Home Internet Access (%)</option><option value="7">No Household Vehicle (%)</option><option value="8">Population (%) at or below poverty level</option><option value="5">County Population</option></select>';
     div.firstChild.onmousedown = div.firstChild.ondblclick = L.DomEvent.stopPropagation;
     return div;
 };
