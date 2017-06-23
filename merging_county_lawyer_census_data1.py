@@ -25,18 +25,18 @@ while next != "":
     countiesDict[CountyName] = totalPop
     next = in2.readline()
 #counties = counties.sort()
-in1 = open("us-states_lawyer_census.js")
+in1 = open("Georgia_Data.js")
 #in2 = open("County_Lawyer_and_census_data.json")
 County = in1.readline()
 County = in1.readline()
-out = open("Georgia_Data.js",'w')
+out = open("Georgia_Data_1.js",'w')
 out.write('''var statesData = {"type":"FeatureCollection","features":[\n''')
 while County != " ]}\n":
     countyName = County[County.find("name")+7:County.find("Active")-3]
     #countiesDict[countyName]['organization']
     countyInfoMatchPrefix = County[0:County.find("Shorthand_FIPS")-1]
     countyInfoMatchSuffix = County[County.find("Shorthand_FIPS")-1:County.find("\n")+2]
-    fullLine = countyInfoMatchPrefix + str(r'"'+"legalAidOffice"+r'"') + ": " + r'"'+countiesDict[countyName]['legalAidOffice'] + r'"' + ", " + str(r'"'+"lawyers"+r'"') + ": " + str(countiesDict[countyName]['lawyers']) + ", " + str(r'"'+"countiesServed" +r'"') + ": "  + str(countiesDict[countyName]['countiesServed']) +", " + str(r'"'+"Organization"+r'"') + ": " + r'"'+countiesDict[countyName]['organization']+r'"' + ", " + countyInfoMatchSuffix
+    fullLine = countyInfoMatchPrefix + str(countiesDict[countyName]) +", " + countyInfoMatchSuffix
     out.write(fullLine)
     County = in1.readline()
 out.write(''']}''')
