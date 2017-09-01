@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>AtJ</title>
+<title>Access to Justice</title>
 <meta charset="utf-8" />
 <link rel="stylesheet" href="leaflet.css" />
 <script src="leaflet.js"></script>
@@ -21,7 +21,7 @@ body {background-color: #00254c;}
         }
 #side-panel {
             position: absolute;
-			text-align: center;
+			      text-align: center;
             left: 0;
             right: 0;
             top: 0;
@@ -77,6 +77,13 @@ body {background-color: #00254c;}
             text-align: left;
             font-size: .9em;
             line-height: 1.3em;
+        } ul {
+            margin: 8px 0 4px;
+            padding: 0 25px 0 15px;
+            color: #f5d376;
+            text-align: left;
+            font-size: .9em;
+            line-height: 1.3em;
         }
 .sidenav {
     height: 100%;
@@ -90,7 +97,6 @@ body {background-color: #00254c;}
     transition: 0.5s;
     padding-top: 60px;
 }
-
 .sidenav a {
     padding: 8px 8px 8px 32px;
     text-decoration: none;
@@ -99,11 +105,9 @@ body {background-color: #00254c;}
     display: block;
     transition: 0.3s
 }
-
 .sidenav a:hover, .offcanvas a:focus{
     color: #f1f1f1;
 }
-
 .sidenav .closebtn {
     position: absolute;
     top: 0;
@@ -111,7 +115,6 @@ body {background-color: #00254c;}
     font-size: 36px;
     margin-left: 50px;
 }
-
 @media screen and (max-height: 450px) {
   .sidenav {padding-top: 15px;}
   .sidenav a {font-size: 18px;}
@@ -130,33 +133,18 @@ body {background-color: #00254c;}
 ////////////////////////////////////////////////////////////////////////////////////////////
 //setting up the map//
 ////////////////////////////////////////////////////////////////////////////////////////////
-
 var map = L.map('map').setView([ 32.836, -83.22], 7);
-
 // WHen the code below is uncommented the map starts with this baselayer
-
-//L.tileLayer('http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', {
-//	attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
-//	subdomains: 'abcd',
-//   id: 'mapbox.dark'
-//    }).addTo(map);
-
-
-
+L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+		attribution: 'Tiles &copy; Mapbox',
+		maxZoom: 19,
+		minZoom: 7,
+		subdomains: 'abcd',
+	    id: 'mapbox.streets'
+    }).addTo(map);
 ////////////////////////////////////////////////////////////////////////////////////////////
 //adding the data//
 ////////////////////////////////////////////////////////////////////////////////////////////
-
-//var noIcon = L.icon({
-//    iconUrl: 'leaf-green.png',
-//	iconSize:[10,10], // size of the icon
-//});
-
-//var markerLayer = L.geoJson(stations, {
-// onEachFeature: function(feature, layer) {
-//    layer.bindPopup(feature.properties.STATION + " County");
-//  }}).addTo(map);
-
 
 var markerLayer = L.geoJson(stations, {
            pointToLayer: function(feature, latlng) {
@@ -170,19 +158,15 @@ var markerLayer = L.geoJson(stations, {
                    layer.bindPopup(feature.properties.STATION + " County");
            }
          }).addTo(map);
-
 map.fitBounds(markerLayer.getBounds());
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 //creating the selector control//
 ////////////////////////////////////////////////////////////////////////////////////////////
-
 //create Leaflet control for selector
 var selector = L.control({
   position: 'topright'
 });
-
 selector.onAdd = function(map) {
   //create div container
   var div = L.DomUtil.create('div', 'mySelector');
@@ -191,12 +175,8 @@ selector.onAdd = function(map) {
   div.firstChild.onmousedown = div.firstChild.ondblclick = L.DomEvent.stopPropagation;
   return div;
 };
-
 selector.addTo(map);
 
-
-//have to use eachFeature (instead of onEachFeature) to create selector options
-//because _leaflet_id doesn't exist until after each feature is created
 markerLayer.eachLayer(function(layer) {
   //create option in selector element
   //with content set to city name
@@ -206,23 +186,15 @@ markerLayer.eachLayer(function(layer) {
   optionElement.value = layer._leaflet_id;
   L.DomUtil.get("marker_select").appendChild(optionElement);
 });
-
-
-
 ////////////////////////////////////////////////////////////////////////////////////////////
 //setting up event listeners//
 ////////////////////////////////////////////////////////////////////////////////////////////
-
 var marker_select = L.DomUtil.get("marker_select");
 
-//prevent clicks on the selector from propagating through to the map
-//(otherwise popups will close immediately after opening)
 L.DomEvent.addListener(marker_select, 'click', function(e) {
   L.DomEvent.stopPropagation(e);
 });
-
 L.DomEvent.addListener(marker_select, 'change', changeHandler);
-
 function changeHandler(e) {
   if (e.target.value == "init") {
     map.closePopup();
@@ -230,91 +202,133 @@ function changeHandler(e) {
     markerLayer.getLayer(e.target.value).openPopup();
   }
 }
-
 //adds the polygon data to the map
 L.geoJson(statesData).addTo(map);
-
 map.on('popupopen', function(centerMarker) {
         var cM = map.project(centerMarker.popup._latlng);
         cM.y -= centerMarker.popup._container.clientHeight/2
-        map.setView(map.unproject(cM),10, {animate: true});
+        map.setView(map.unproject(cM),8, {animate: false});
     });
 </script>
-
-
-
 
 <script type="text/javascript">
 // this script controls the info and the legend
 	var info = L.control({position: 'bottomright'});
-
 	info.onAdd = function (map) {
 		this._div = L.DomUtil.create('div', 'info');
 		this.update();
 		return this._div;
 	};
-
 	info.update = function (props) {
-		this._div.innerHTML =  (props ?	props.name + ' County</b><br/>' + 'Area: '+ props.CENSUSAREA + ' mi<sup>2</sup><br/>' +
-																		  'Active Lawyers: ' + props.Active + '<br/>' +
-																		  'Inactive Lawyers: ' + props.Inactive + '<br/>' +
-																		  'Emeritus Lawyers: ' + props.Emeritus
+		this._div.innerHTML =  (props ?	'<b>' + props.name + ' County</b><br/>' +
+							   'The population is '+ props.totpop10.toLocaleString() + ' people.' + '<br/>' +
+                 'There are ' + props.Active.toLocaleString() + ' active lawyers.' + '<br/>' +
+                 props.Organization + ' operates the ' + props.legalAidOffice + (["Clayton","Cobb","DeKalb","Fulton","Gwinnett"].includes(props.name) ? ' Legal Aid Office.' : ' GLSP Office.') + '<br/>' +
+                 props.lawyers + ' lawyers serve the ' + props.legalAidOffice + ' office.' + '<br/>' +
+                 'The ' + props.legalAidOffice + ' office serves ' +  props.countiesServed + ' counties in total.' + '<br/>' +
+                <!---'Inactive Lawyers: ' + props.Inactive + '<br/>' +--->
+								<!---'Emeritus Lawyers: ' + props.Emeritus--->
+								props.pctHouseholdsHalfMileofPublicTransport + '% of households live within a half mile of public transit.' + '<br/>' +
+								props.PctHouseholdsNOvehicle + '% of households do not have a vehicle.' + '<br/>' +
+								props.PctPopNONEnglishHome + '% of the population does not speak English at home.' + '<br/>' +
+								props.pctPopLEQpovertylevel + '% of the population is at or below the poverty level.' + '<br/>' +
+								props.HomeInternetAccessRangeLow + '% of households have internet access.'
 			: 'Hover over a county');
 	};
-
 	info.addTo(map);
 
-
 	function getColor(d) {
-		return d > 700 ? '#800026' :
-				d > 600  ? '#BD0026' :
-				d > 500  ? '#E31A1C' :
-				d > 400  ? '#FC4E2A' :
-				d > 300   ? '#FD8D3C' :
-				d > 200   ? '#FEB24C' :
-				d > 100   ? '#FED976' :
-							'#FFEDA0';
+		return d > 700 ? '#081d58' :
+				d > 600  ? '#253494' :
+				d > 500  ? '#225ea8' :
+				d > 400  ? '#1d91c0' :
+				d > 300   ? '#41b6c4' :
+				d > 200   ? '#7fcdbb' :
+				d > 100   ? '#c7e9b4' :
+							'#edf8b1';
 	}
+
+	function getColorPct(d) {
+		return d > 70 ? '#081d58' :
+				d > 60  ? '#253494' :
+				d > 50  ? '#225ea8' :
+				d > 40  ? '#1d91c0' :
+				d > 30   ? '#41b6c4' :
+				d > 20   ? '#7fcdbb' :
+				d > 10   ? '#c7e9b4' :
+							'#edf8b1';
+	}
+
+  function getColorPctVehicle(d) {
+		return d > 17.5 ? '#081d58' :
+				d > 15  ? '#253494' :
+				d > 12.5  ? '#225ea8' :
+				d > 10  ? '#1d91c0' :
+				d > 7.5   ? '#41b6c4' :
+				d > 5   ? '#7fcdbb' :
+				d > 2.5   ? '#c7e9b4' :
+							'#edf8b1';
+	}
+
+  function getColoraidLawyers(d) {
+    return d > 15 ? '#081d58' :
+        d > 13  ? '#0D3A71' :
+        d > 11  ? '#12578C' :
+        d > 10  ? '#1774A6' :
+        d > 9  ? '#1D91C0' :
+        d > 8   ? '#41B6C4' :
+        d > 7   ? '#6CC6BF' :
+        d > 6   ? '#97D7BA' :
+        d > 5   ? '#C2E7B5' :
+              '#EDF8B1';
+	}
+
+  function getColor_pop(d) {
+    return d > 750000 ? '#081d58 ' :
+        d > 500000  ? '#253494' :
+        d > 250000  ? '#225ea8' :
+        d > 100000  ? '#1d91c0' :
+        d > 50000   ? '#41b6c4' :
+        d > 25000   ? '#7fcdbb' :
+        d > 10000   ? '#c7e9b4' :
+              '#edf8b1';
+  }
 
 	function style(feature) {
 		return {
 			weight: 2,
-			opacity: 1,
+			opacity: .1,
 			color: 'white',
 			dashArray: '3',
-			fillOpacity: 0.0,
+			fillOpacity: 0.1,
 			fillColor: getColor(feature.properties.Active)
 		};
 	}
 
 	function highlightFeature(e) {
 		var layer = e.target;
-
 		layer.setStyle({
 			weight: 5,
-			color: ' #fff',
-			dashArray: '',
-			fillOpacity: 0.0
+			opacity: .1,
+			color: '#fff',
+			dashArray: '3',
+			fillOpacity: 1,
+			fillColor: ' #b30000'
 		});
-
 		if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
 			layer.bringToFront();
 		}
-
 		info.update(layer.feature.properties);
 	}
 
 	var geojson;
-
 	function resetHighlight(e) {
 		geojson.resetStyle(e.target);
 		info.update();
 	}
-
 	function zoomToFeature(e) {
 		map.fitBounds(e.target.getBounds());
 	}
-
 	function onEachFeature(feature, layer) {
 		layer.on({
 			mouseover: highlightFeature,
@@ -328,90 +342,212 @@ map.on('popupopen', function(centerMarker) {
 		onEachFeature: onEachFeature
 	}).addTo(map);
 
-
-	var legend = L.control({position: 'bottomleft'});
-
-	legend.onAdd = function (map) {
-
+	var legend_active = L.control({position: 'bottomleft'});
+	legend_active.onAdd = function (map) {
 		var div = L.DomUtil.create('div', 'info legend'),
 			grades = [0, 100, 200, 300, 400, 500, 600, 700],
 			labels = [],
 			from, to;
-
 		for (var i = 0; i < grades.length; i++) {
 			from = grades[i];
 			to = grades[i + 1];
-
 			labels.push(
 				'<i style="background:' + getColor(from + 1) + '"></i> ' +
 				from + (to ? '&ndash;' + to : '+'));
 		}
-
 		div.innerHTML = labels.join('<br>');
 		return div;
 	};
 
-	legend.addTo(map);
+	var legend_noEnglish = L.control({position: 'bottomleft'});
+	legend_noEnglish.onAdd = function (map) {
+		var div = L.DomUtil.create('div', 'info legend'),
+			grades = [0, 10, 20, 30, 40, 50, 60, 70],
+			labels = [],
+			from, to;
+		for (var i = 0; i < grades.length; i++) {
+			from = grades[i];
+			to = grades[i + 1];
+			labels.push(
+				'<i style="background:' + getColorPct(from + 1) + '"></i> ' +
+				from + (to ? '&ndash;' + to : '+'));
+		}
+		div.innerHTML = labels.join('<br>');
+		return div;
+	};
+
+	var legend_noVehicle = L.control({position: 'bottomleft'});
+	legend_noVehicle.onAdd = function (map) {
+		var div = L.DomUtil.create('div', 'info legend'),
+			grades = [0, 2.5, 5, 7.5, 10, 12.5, 15, 17.5],
+			labels = [],
+			from, to;
+		for (var i = 0; i < grades.length; i++) {
+			from = grades[i];
+			to = grades[i + 1];
+			labels.push(
+				'<i style="background:' + getColorPctVehicle(from + 1) + '"></i> ' +
+				from + (to ? '&ndash;' + to : '+'));
+		}
+		div.innerHTML = labels.join('<br>');
+		return div;
+	};
+
+  var legend_legalAid = L.control({position: 'bottomleft'});
+	legend_legalAid.onAdd = function (map) {
+		var div = L.DomUtil.create('div', 'info legend'),
+			grades = [4,5,6,7,8,9,10,11,13,15],
+			labels = [],
+			from, to;
+		for (var i = 0; i < grades.length; i++) {
+			from = grades[i];
+			to = grades[i + 1];
+			labels.push(
+        //				'<i style="background:' + getColoraidLawyers(from + 1) + '"></i> ' + from + (to ? '&ndash;' + to : '+'));
+        				'<i style="background:' + getColoraidLawyers(from + 1) + '"></i> ' + from );
+		}
+		div.innerHTML = labels.join('<br>');
+		return div;
+	};
+
+  var legend_population = L.control({position: 'bottomleft'});
+	legend_population.onAdd = function (map) {
+		var div = L.DomUtil.create('div', 'info legend'),
+			grades = [0, 10000, 25000, 50000, 100000, 250000, 500000, 750000],
+			labels = [],
+			from, to;
+		for (var i = 0; i < grades.length; i++) {
+			from = grades[i];
+			to = grades[i + 1];
+			labels.push(
+				'<i style="background:' + getColor_pop(from + 1) + '"></i> ' +
+				from + (to ? '&ndash;' + to : '+'));
+		}
+		div.innerHTML = labels.join('<br>');
+		return div;
+	};
+
+//  legend_legalAid.addTo(map);
+//	currentLegend = legend_legalAid;
+
 </script>
 
 <div id="map1"></div>
 <script>
-	var Courthouses = new L.LayerGroup();
-
-	L.marker([33.7740, -84.2974]).bindPopup('DeKalb County Courthouse.').addTo(Courthouses),
-	L.marker([33.7504, -84.3906]).bindPopup('Fulton County Courthouse.').addTo(Courthouses),
-	L.marker([32.0792, -81.0972]).bindPopup('Chatham County Courthouse').addTo(Courthouses),
-	L.marker([32.8385, -83.6279]).bindPopup('Bibb County Courthouse.').addTo(Courthouses),
-	L.marker([34.8787034, -83.4018266]).bindPopup('Rabun County Courthouse<br>25 Courthouse Square<br>Clayton, GA').addTo(Courthouses),
-	L.marker([33.9600, -883.3754]).bindPopup('Clarke County Courthouse.').addTo(Courthouses);
+//	var Courthouses = new L.LayerGroup();
+//	L.marker([33.7740, -84.2974]).bindPopup('DeKalb County Courthouse.').addTo(Courthouses),
+//	L.marker([33.7504, -84.3906]).bindPopup('Fulton County Courthouse.').addTo(Courthouses),
+//	L.marker([32.0792, -81.0972]).bindPopup('Chatham County Courthouse').addTo(Courthouses),
+//	L.marker([32.8385, -83.6279]).bindPopup('Bibb County Courthouse.').addTo(Courthouses),
+//	L.marker([34.8787034, -83.4018266]).bindPopup('Rabun County Courthouse<br>25 Courthouse Square<br>Clayton, GA').addTo(Courthouses),
+//	L.marker([33.9600, -883.3754]).bindPopup('Clarke County Courthouse.').addTo(Courthouses);
 
 	var mbAttr = 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
 			'<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
 			'Imagery © <a href="http://mapbox.com">Mapbox</a>',
 		mbUrl = 'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
 
-	var dark        = L.tileLayer('http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', {
-						attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+	var dark = L.tileLayer('http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', {
+		attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
 								maxZoom: 19,
     							minZoom: 7,
 								subdomains: 'abcd',
     							id: 'mapbox.dark'}),
-		grayscale   = L.tileLayer(mbUrl, {
+	    Esri_WorldStreetMap = L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+		attribution: 'Tiles &copy; Esri &mdash; Source: Esri',
+								maxZoom: 19,
+    							minZoom: 7,
+								subdomains: 'abcd',
+    							id: 'mapbox.dark'}),
+		basic   = L.tileLayer(mbUrl, {
+								maxZoom: 19,
+    							minZoom: 7,
+								id: 'mapbox.basic',
+								attribution: mbAttr}),
+		bright   = L.tileLayer(mbUrl, {
+								maxZoom: 19,
+    							minZoom: 7,
+								id: 'mapbox.bright',
+								attribution: mbAttr}),
+		light   = L.tileLayer(mbUrl, {
 								maxZoom: 19,
     							minZoom: 7,
 								id: 'mapbox.light',
 								attribution: mbAttr}),
-		streets  = L.tileLayer(mbUrl, {
+		streets   = L.tileLayer(mbUrl, {
 								maxZoom: 19,
     							minZoom: 7,
 								id: 'mapbox.streets',
 								attribution: mbAttr});
+
 	var baseLayers = {
-		"Dark": dark,
-		"Grayscale": grayscale,
-		"Streets": streets
+		"light": light,
+		"basic (reset)": basic,
+		"Dark": dark
 	};
-
-	var overlays = {
-		"Courthouses": Courthouses
-
-	};
-
-
-	L.control.layers(baseLayers, overlays).addTo(map);
+//	var overlays = {
+//		"Courthouses": Courthouses
+//	};
+//	L.control.layers(baseLayers, overlays).addTo(map);
+//	L.control.layers(baseLayers).addTo(map);
 </script>
 
 
 <script>
 function getColor(d) {
-		return d > 700 ? '#800026' :
-				d > 600  ? '#BD0026' :
-				d > 500  ? '#E31A1C' :
-				d > 400  ? '#FC4E2A' :
-				d > 300   ? '#FD8D3C' :
-				d > 200   ? '#FEB24C' :
-				d > 100   ? '#FED976' :
-							'#FFEDA0';
+		return d > 700 ? '#081d58 ' :
+				d > 600  ? '#253494' :
+				d > 500  ? '#225ea8' :
+				d > 400  ? '#1d91c0' :
+				d > 300   ? '#41b6c4' :
+				d > 200   ? '#7fcdbb' :
+				d > 100   ? '#c7e9b4' :
+							'#edf8b1';
+}
+function getColor_percent(d) {
+		return d > 70 ? '#081d58' :
+				d > 60  ? '#253494' :
+				d > 50  ? '#225ea8' :
+				d > 40  ? '#1d91c0' :
+				d > 30   ? '#41b6c4' :
+				d > 20   ? '#7fcdbb' :
+				d > 10   ? '#c7e9b4' :
+							'#edf8b1';
+}
+function getColor_vehicle_percent(d) {
+		return d > 17.5 ? '#081d58' :
+				d > 15  ? '#253494' :
+				d > 12.5  ? '#225ea8' :
+				d > 10  ? '#1d91c0' :
+				d > 7.5   ? '#41b6c4' :
+				d > 5   ? '#7fcdbb' :
+				d > 2.5   ? '#c7e9b4' :
+							'#edf8b1';
+}
+
+function getColoraidLawyers(d) {
+  return d > 15 ? '#081d58' :
+      d > 13  ? '#0D3A71' :
+      d > 11  ? '#12578C' :
+      d > 10  ? '#1774A6' :
+      d > 9  ? '#1D91C0' :
+      d > 8   ? '#41B6C4' :
+      d > 7   ? '#6CC6BF' :
+      d > 6   ? '#97D7BA' :
+      d > 5   ? '#C2E7B5' :
+            '#EDF8B1';
+}
+
+
+function getColor_pop(d) {
+  return d > 750000 ? '#081d58 ' :
+      d > 500000  ? '#253494' :
+      d > 250000  ? '#225ea8' :
+      d > 100000  ? '#1d91c0' :
+      d > 50000   ? '#41b6c4' :
+      d > 25000   ? '#7fcdbb' :
+      d > 10000   ? '#c7e9b4' :
+            '#edf8b1';
 }
 
 function style_census(feature) {
@@ -421,100 +557,181 @@ function style_census(feature) {
 		color: 'white',
 		dashArray: '3',
 		fillOpacity: 1,
-		fillColor: getColor(feature.properties.CENSUSAREA)
+		fillColor: getColor_pop(feature.properties.totpop10)
 	};
 }
-
 function style_active(feature) {
 	return {
-		weight: 2,
-		opacity: 1,
-		color: 'white',
-		dashArray: '3',
-		fillOpacity: 1,
-		fillColor: getColor(feature.properties.Active)
+    weight: 2,
+    opacity: 1,
+    color: 'white',
+    dashArray: '3',
+    fillOpacity: 1,
+    fillColor: getColor(feature.properties.Active)
+//		weight: 2,
+//		opacity: 1,
+//		color: 'white',
+//		dashArray: '3',
+//		fillOpacity: 1,
+//		fillColor: getColor(feature.properties.Active)
 	};
 }
-function style_inactive(feature) {
+function style_english(feature) {
 	return {
 		weight: 2,
 		opacity: 1,
 		color: 'white',
 		dashArray: '3',
 		fillOpacity: 1,
-		fillColor: getColor(feature.properties.Inactive)
+		fillColor: getColor_percent(feature.properties.PctPopNONEnglishHome)
 	};
 }
-function style_emeritus(feature) {
+function style_pubtrans(feature) {
 	return {
 		weight: 2,
 		opacity: 1,
 		color: 'white',
 		dashArray: '3',
 		fillOpacity: 1,
-		fillColor: getColor(feature.properties.Emeritus)
+		fillColor: getColor_percent(feature.properties.pctHouseholdsHalfMileofPublicTransport)
+	};
+}
+function style_internet(feature) {
+	return {
+		weight: 2,
+		opacity: 1,
+		color: 'white',
+		dashArray: '3',
+		fillOpacity: 1,
+		fillColor: getColor_percent(feature.properties.HomeInternetAccessRangeLow)
+	};
+}
+function style_novehicle(feature) {
+	return {
+		weight: 2,
+		opacity: 1,
+		color: 'white',
+		dashArray: '3',
+		fillOpacity: 1,
+		fillColor: getColor_vehicle_percent(feature.properties.PctHouseholdsNOvehicle)
+	};
+}
+function style_povertylevel(feature) {
+	return {
+		weight: 2,
+		opacity: 1,
+		color: 'white',
+		dashArray: '3',
+		fillOpacity: 1,
+		fillColor: getColor_percent(feature.properties.pctPopLEQpovertylevel)
 	};
 }
 
-
-
-//geojson = L.geoJson(statesData, {
-//	style: style,
-//	onEachFeature: onEachFeature
-//}).addTo(map);
+function style_aidlawyerlevel(feature) {
+	return {
+		weight: 2,
+		opacity: 1,
+		color: 'white',
+		dashArray: '3',
+		fillOpacity: 1,
+		fillColor: getColoraidLawyers(feature.properties.lawyers)
+	};
+}
 
 
 // this script controls the variable by which the map is colored
 var picker = L.control({position: 'bottomleft'});
 picker.onAdd = function (map) {
     var div = L.DomUtil.create('div', 'var_picker');
-    div.innerHTML = '<select id="data_select"><option value="1">Active Lawyers</option><option value="2">Inactive Lawyers</option><option value="3">Emeritus Lawyers</option><option value="4">Census Area</option></select>';
+    div.innerHTML = '<select id="data_select"><option value="1">Legal Services Lawyers </option><option value="2">Active Lawyers</option><option value="3">No English at Home (%)</option><option value="4">Within half mile of Public Transportation(%)</option><option value="6">Home Internet Access (%)</option><option value="7">No Household Vehicle (%)</option><option value="8">Population (%) at or below poverty level</option><option value="5">County Population</option></select>';
     div.firstChild.onmousedown = div.firstChild.ondblclick = L.DomEvent.stopPropagation;
     return div;
 };
 picker.addTo(map);
 
-//add data picker listener as on line 214
+//add data picker listener
 var data_select = L.DomUtil.get("data_select");
-
 L.DomEvent.addListener(data_select, 'click', function(e) {
   L.DomEvent.stopPropagation(e);
 });
-
 L.DomEvent.addListener(data_select, 'change', changeHandler_1);
-
 var geojson;
-geojson = L.geoJson(statesData, {style: style_active, onEachFeature: onEachFeature}).addTo(map)
+geojson = L.geoJson(statesData, {style: style_aidlawyerlevel, onEachFeature: onEachFeature}).addTo(map)
 function changeHandler_1(e) {
   if (e.target.value == "1") {
+  geojson = L.geoJson(statesData, {style: style_aidlawyerlevel, onEachFeature: onEachFeature}).addTo(map);
+map.removeControl(currentLegend);
+currentLegend = legend_legalAid;
+legend_legalAid.addTo(map);
+} else if (e.target.value == "2") {
 	geojson = L.geoJson(statesData, {style: style_active, onEachFeature: onEachFeature}).addTo(map)
-  } else if (e.target.value == "2") {
-    geojson = L.geoJson(statesData, {style: style_inactive, onEachFeature: onEachFeature}).addTo(map);
-  } else if (e.target.value == "3") {
-    geojson = L.geoJson(statesData, {style: style_emeritus, onEachFeature: onEachFeature}).addTo(map);
-  } else if (e.target.value == "4") {
+	map.removeControl(currentLegend);
+	currentLegend = legend_active;
+	legend_active.addTo(map);
+} else if (e.target.value == "3") {
+    geojson = L.geoJson(statesData, {style: style_english, onEachFeature: onEachFeature}).addTo(map);
+	map.removeControl(currentLegend);
+	currentLegend = legend_noEnglish;
+	legend_noEnglish.addTo(map);
+} else if (e.target.value == "4") {
+    geojson = L.geoJson(statesData, {style: style_pubtrans, onEachFeature: onEachFeature}).addTo(map);
+	map.removeControl(currentLegend);
+	currentLegend = legend_noVehicle;
+	legend_noVehicle.addTo(map);
+} else if (e.target.value == "5") {
     geojson = L.geoJson(statesData, {style: style_census, onEachFeature: onEachFeature}).addTo(map);
+	map.removeControl(currentLegend);
+	currentLegend = legend_population;
+	legend_population.addTo(map);
+} else if (e.target.value == "6") {
+    geojson = L.geoJson(statesData, {style: style_internet, onEachFeature: onEachFeature}).addTo(map);
+	map.removeControl(currentLegend);
+	currentLegend = legend_noEnglish;
+	legend_noEnglish.addTo(map);
+} else if (e.target.value == "7") {
+    geojson = L.geoJson(statesData, {style: style_novehicle, onEachFeature: onEachFeature}).addTo(map);
+	map.removeControl(currentLegend);
+	currentLegend = legend_noVehicle;
+	legend_noVehicle.addTo(map);
+} else if (e.target.value == "8") {
+  geojson = L.geoJson(statesData, {style: style_povertylevel, onEachFeature: onEachFeature}).addTo(map);
+  map.removeControl(currentLegend);
+  currentLegend = legend_noEnglish;
+  legend_noEnglish.addTo(map);
   } else {
-	geojson = L.geoJson(statesData, {style: style, onEachFeature: onEachFeature}).addTo(map);
+	geojson = L.geoJson(statesData, {style: style_aidlawyerlevel, onEachFeature: onEachFeature}).addTo(map);
+	map.removeControl(currentLegend);
+	currentLegend = legend_legalAid;
+	legend_legalAid.addTo(map);
   }
 }
-
 // this part of the script controls the coloring of the map
-
-
+legend_legalAid.addTo(map);
+currentLegend = legend_legalAid;
 </script>
 
 <div id='side-panel'>
     <h1>Access to Justice</h1>
-    <h4>Legal Representation in Georgia</h4>
-    <p>This map displays the various degrees to which legal rerpresentation is available in the state of Georgia. Each county is colored according to the chosen statistic (bottom left) such as the total number of Active Lawyers in the county or the percent of the state's lawyers which reside in the county.</p>
-    <h2>About </h2>
-        <p>The Access to Justice group is a collaboration between Chad Wigington and Joshua Weitz at Georgia Tech and Darcy McLean Meals and Lauren Sudeall Lucas at Georgia State University.</p>
+    <!--<h4>Legal Representation in Georgia</h4>-->
+    <p>This map - a collaboration between Chad Wigington and Joshua Weitz at Georgia Tech and the Center for Access to Justice at Georgia State University College of Law - provides information regarding access to justice in the state of Georgia. Each county is shaded according to the metric chosen at the bottom left.</p>
 
     <h2>About the data</h2>
-        <p>The Georgia bar provides information about each county with respect to the number of active, inactive, and emeritus lawyers. By merging this data with available census data, the counties can be colored according to access to legal counsel as well as descriptive statistics about each county. </p>
-        <br><br><br><br>
-<p>Map authored by Charles Wigington, March 2017.</p>
+        <p>The State Bar of Georgia provided the number of lawyers by county in 2016. By combining this data with information from the <a href="https://srln.maps.arcgis.com/apps/MapJournal/index.html?appid=7bed22dba4ec45f281b766181b862156" style="color:#f5d376">Self Represented Litigants Network</a>, available census data from the <a href="https://www.census.gov/programs-surveys/acs/about.html" style="color:#f5d376">2014 American Community Survey</a>, 2015 statistics from the <a href = "https://www.fcc.gov", style="color:#f5d376">Federal Communications Commission</a>, data from the <a href = "http://alltransit.cnt.org/", style="color:#f5d376"> Center for Neighborhood Technology</a>, and 2016 information from the <a href="http://www.glsp.org/" style="color:#f5d376">Georgia Legal Services Program (GLSP)</a> and <a href="https://www.atlantalegalaid.org/" style="color:#f5d376">the Atlanta Legal Aid Society (ALAS)</a>, the map provides insight into attorney representation and other factors that impact access to justice throughout the state.</p>
+
+        <p>The “Legal Services Lawyers” metric includes attorneys from ALAS (in Clayton, Fulton, Cobb, DeKalb, and Gwinnett counties) and GLSP (outside the five-county metro Atlanta area served by ALAS). For the ALAS counties, the number of Legal Services Lawyers serving a given county reflects both attorneys assigned to that county and a portion of the 22.5 ALAS attorneys not assigned to a particular county; for example, Cobb County has 6 ALAS lawyers, but its total includes 1/5 of the program-wide attorneys for an additional 4.5 attorneys. By contrast, GLSP attorneys are assigned to a particular region of the state and serve several counties (e.g. attorneys from the Albany-Valdosta office service 29 counties). Thus, outside the five-county metro area, the Legal Services Lawyers total for a particular county includes GLSP lawyers who also serve other counties. GLSP totals for a given county do not include 7 statewide attorneys or the 2 attorneys serving farmworkers throughout the state.
+</p>
+
+	<p>The Center for Neighborhood Technology’s public transit data is only consistently available for counties with more than 100,000 residents. Less populous counties may therefore reflect 0 public transit even where it may be available.</p>
+
+        <br>
+        <h2>About </h2>
+        <ul>
+        <li>In the top right, counties are listed alphabetically and can be selected to show their location.</li>
+        <li>Selecting a metric from the drop-down menu on the bottom left changes the map coloring scheme.</li>
+        <li>Hovering the mouse within the borders of a county will display the county's information in the bottom right corner.</li>
+      </ul>
+      <br>
+<p>Map designed by Charles Wigington, March 2017.</p>
 
     </div>
 
