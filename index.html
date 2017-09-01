@@ -145,14 +145,7 @@ L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=p
 ////////////////////////////////////////////////////////////////////////////////////////////
 //adding the data//
 ////////////////////////////////////////////////////////////////////////////////////////////
-//var noIcon = L.icon({
-//    iconUrl: 'leaf-green.png',
-//	iconSize:[10,10], // size of the icon
-//});
-//var markerLayer = L.geoJson(stations, {
-// onEachFeature: function(feature, layer) {
-//    layer.bindPopup(feature.properties.STATION + " County");
-//  }}).addTo(map);
+
 var markerLayer = L.geoJson(stations, {
            pointToLayer: function(feature, latlng) {
                 var smallIcon = new L.Icon({
@@ -183,8 +176,7 @@ selector.onAdd = function(map) {
   return div;
 };
 selector.addTo(map);
-//have to use eachFeature (instead of onEachFeature) to create selector options
-//because _leaflet_id doesn't exist until after each feature is created
+
 markerLayer.eachLayer(function(layer) {
   //create option in selector element
   //with content set to city name
@@ -198,8 +190,7 @@ markerLayer.eachLayer(function(layer) {
 //setting up event listeners//
 ////////////////////////////////////////////////////////////////////////////////////////////
 var marker_select = L.DomUtil.get("marker_select");
-//prevent clicks on the selector from propagating through to the map
-//(otherwise popups will close immediately after opening)
+
 L.DomEvent.addListener(marker_select, 'click', function(e) {
   L.DomEvent.stopPropagation(e);
 });
@@ -219,9 +210,6 @@ map.on('popupopen', function(centerMarker) {
         map.setView(map.unproject(cM),8, {animate: false});
     });
 </script>
-
-
-
 
 <script type="text/javascript">
 // this script controls the info and the legend
@@ -650,10 +638,6 @@ function style_aidlawyerlevel(feature) {
 	};
 }
 
-//geojson = L.geoJson(statesData, {
-//	style: style,
-//	onEachFeature: onEachFeature
-//}).addTo(map);
 
 // this script controls the variable by which the map is colored
 var picker = L.control({position: 'bottomleft'});
@@ -664,7 +648,8 @@ picker.onAdd = function (map) {
     return div;
 };
 picker.addTo(map);
-//add data picker listener as on line 214
+
+//add data picker listener
 var data_select = L.DomUtil.get("data_select");
 L.DomEvent.addListener(data_select, 'click', function(e) {
   L.DomEvent.stopPropagation(e);
@@ -735,9 +720,9 @@ currentLegend = legend_legalAid;
 
         <p>The “Legal Services Lawyers” metric includes attorneys from ALAS (in Clayton, Fulton, Cobb, DeKalb, and Gwinnett counties) and GLSP (outside the five-county metro Atlanta area served by ALAS). For the ALAS counties, the number of Legal Services Lawyers serving a given county reflects both attorneys assigned to that county and a portion of the 22.5 ALAS attorneys not assigned to a particular county; for example, Cobb County has 6 ALAS lawyers, but its total includes 1/5 of the program-wide attorneys for an additional 4.5 attorneys. By contrast, GLSP attorneys are assigned to a particular region of the state and serve several counties (e.g. attorneys from the Albany-Valdosta office service 29 counties). Thus, outside the five-county metro area, the Legal Services Lawyers total for a particular county includes GLSP lawyers who also serve other counties. GLSP totals for a given county do not include 7 statewide attorneys or the 2 attorneys serving farmworkers throughout the state.
 </p>
-	
+
 	<p>The Center for Neighborhood Technology’s public transit data is only consistently available for counties with more than 100,000 residents. Less populous counties may therefore reflect 0 public transit even where it may be available.</p>
-	
+
         <br>
         <h2>About </h2>
         <ul>
