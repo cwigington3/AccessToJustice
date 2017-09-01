@@ -11,4 +11,4 @@ The Center for Neighborhood Technology’s public transit data is only consisten
 
 
 # [Access To Justice](https://cwigington3.github.io/AccessToJustice)
-![alt text](images/ATJ_preview.png)
+![ATJ](images/ATJ_preview.png)
